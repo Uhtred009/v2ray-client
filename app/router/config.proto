@@ -6,8 +6,8 @@ option go_package = "v2ray.com/core/app/router";
 option java_package = "com.v2ray.core.app.router";
 option java_multiple_files = true;
 
-import "common/net/port.proto";
-import "common/net/network.proto";
+import "port.proto";
+import "network.proto";
 
 // Domain for routing decision.
 message Domain {
@@ -122,8 +122,26 @@ message RoutingRule {
 }
 
 message BalancingRule {
+
+enum BalancingStrategy{
+    // Choose the tag randomly
+    Random = 0;
+
+    // Choose the tag of the next alive outbound
+    Fallback = 1;
+  }
+
   string tag = 1;
   repeated string outbound_selector = 2;
+   BalancingStrategy strategy = 3;
+  FallbackSettings fallbackSettings = 4;
+
+
+}
+
+
+message FallbackSettings{
+  int64 max_attempts = 1;
 }
 
 message Config {

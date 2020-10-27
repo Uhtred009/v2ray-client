@@ -3,6 +3,7 @@ package outbound
 import (
 	"context"
 
+
 	"v2ray.com/core"
 	"v2ray.com/core/app/proxyman"
 	"v2ray.com/core/common"
@@ -17,6 +18,7 @@ import (
 	"v2ray.com/core/transport/internet"
 	"v2ray.com/core/transport/internet/tls"
 	"v2ray.com/core/transport/pipe"
+	"v2ray.com/core/common/log"
 )
 
 func getStatCounter(v *core.Instance, tag string) (stats.Counter, stats.Counter) {
@@ -54,6 +56,7 @@ type Handler struct {
 	mux             *mux.ClientManager
 	uplinkCounter   stats.Counter
 	downlinkCounter stats.Counter
+	failedAttempts  stats.Counter
 }
 
 // NewHandler create a new Handler based on the given configuration.
@@ -124,6 +127,22 @@ func NewHandler(ctx context.Context, config *core.OutboundHandlerConfig) (outbou
 	return h, nil
 }
 
+
+// GetFailedAttempts implements outbound.FailedAttemptsRecorder.
+func (h *Handler) GetFailedAttempts() int64 {
+	return h.failedAttempts.Value()
+}
+
+// ResetFailedAttempts implements outbound.FailedAttemptsRecorder.
+func (h *Handler) ResetFailedAttempts() {
+	h.failedAttempts.Set(0)
+}
+
+// RecordFailedAttempts implements outbound.FailedAttemptsRecorder.
+func (h *Handler) RecordFailedAttempts() {
+	h.failedAttempts.Add(1)
+}
+
 // Tag implements outbound.Handler.
 func (h *Handler) Tag() string {
 	return h.tag
@@ -133,13 +152,23 @@ func (h *Handler) Tag() string {
 func (h *Handler) Dispatch(ctx context.Context, link *transport.Link) {
 	if h.mux != nil && (h.mux.Enabled || session.MuxPreferedFromContext(ctx)) {
 		if err := h.mux.Dispatch(ctx, link); err != nil {
-			newError("failed to process mux outbound traffic").Base(err).WriteToLog(session.ExportIDToError(ctx))
+			//newError("failed to process mux outbound traffic").Base(err).WriteToLog(session.ExportIDToError(ctx))
+			e := newError("failed to process mux outbound traffic").Base(err)
+			if e.Severity() <= log.Severity_Warning {
+				h.RecordFailedAttempts()
+			}
+			e.WriteToLog(session.ExportIDToError(ctx))
 			common.Interrupt(link.Writer)
 		}
 	} else {
 		if err := h.proxy.Process(ctx, link, h); err != nil {
 			// Ensure outbound ray is properly closed.
-			newError("failed to process outbound traffic").Base(err).WriteToLog(session.ExportIDToError(ctx))
+			//newError("failed to process outbound traffic").Base(err).WriteToLog(session.ExportIDToError(ctx))
+			e := newError("failed to process outbound traffic").Base(err)
+			if e.Severity() <= log.Severity_Warning {
+				h.RecordFailedAttempts()
+			}
+			e.WriteToLog(session.ExportIDToError(ctx))
 			common.Interrupt(link.Writer)
 		} else {
 			common.Must(common.Close(link.Writer))

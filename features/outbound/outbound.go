@@ -21,6 +21,14 @@ type HandlerSelector interface {
 	Select([]string) []string
 }
 
+
+// FailedAttemptsRecorder is the interface for handlers that can record and report failed attempts
+type FailedAttemptsRecorder interface {
+	GetFailedAttempts() int64
+	RecordFailedAttempts()
+	ResetFailedAttempts()
+}
+
 // Manager is a feature that manages outbound.Handlers.
 //
 // v2ray:api:stable

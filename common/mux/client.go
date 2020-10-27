@@ -6,6 +6,8 @@ import (
 	"sync"
 	"time"
 
+	"v2ray.com/core/features/outbound"
+	"v2ray.com/core/common/log"
 	"v2ray.com/core/common"
 	"v2ray.com/core/common/buf"
 	"v2ray.com/core/common/errors"
@@ -154,7 +156,11 @@ func (f *DialingWorkerFactory) Create() (*ClientWorker, error) {
 		ctx, cancel := context.WithCancel(ctx)
 
 		if err := p.Process(ctx, &transport.Link{Reader: uplinkReader, Writer: downlinkWriter}, d); err != nil {
-			errors.New("failed to handler mux client connection").Base(err).WriteToLog()
+			e := errors.New("failed to handler mux client connection").Base(err)
+			if recorder, ok := d.(outbound.FailedAttemptsRecorder); ok && e.Severity() <= log.Severity_Warning {
+				recorder.RecordFailedAttempts()
+			}
+			e.WriteToLog()
 		}
 		common.Must(c.Close())
 		cancel()
