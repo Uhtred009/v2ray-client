@@ -7,7 +7,7 @@ require (
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.4.3
-	github.com/google/go-cmp v0.5.2
+	github.com/google/go-cmp v0.5.4
 	github.com/gorilla/websocket v1.4.2
 	github.com/lucas-clemente/quic-go v0.18.1
 	github.com/miekg/dns v1.1.33
