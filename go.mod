@@ -6,8 +6,8 @@ require (
 	github.com/dgryski/go-metro v0.0.0-20200812162917-85c65e2d0165 // indirect
 	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32
 	github.com/golang/mock v1.4.4
-	github.com/golang/protobuf v1.4.3
-	github.com/google/go-cmp v0.5.2
+	github.com/golang/protobuf v1.5.0
+	github.com/google/go-cmp v0.5.5
 	github.com/gorilla/websocket v1.4.2
 	github.com/lucas-clemente/quic-go v0.18.1
 	github.com/miekg/dns v1.1.33
@@ -23,7 +23,7 @@ require (
 	golang.org/x/sys v0.0.0-20201017003518-b09fb700fbb7
 	google.golang.org/genproto v0.0.0-20201015140912-32ed001d685c // indirect
 	google.golang.org/grpc v1.32.0
-	google.golang.org/protobuf v1.25.0
+	google.golang.org/protobuf v1.26.0
 	h12.io/socks v1.0.1
 )
 
