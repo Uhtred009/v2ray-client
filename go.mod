@@ -13,7 +13,7 @@ require (
 	github.com/miekg/dns v1.1.33
 	github.com/pires/go-proxyproto v0.2.0
 	github.com/seiflotfy/cuckoofilter v0.0.0-20201009151232-afb285a456ab
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/xiaokangwang/VSign v0.0.0-20200828155424-dc1c86b73fbf
 	github.com/xtls/go v0.0.0-20201007031018-d42c13c57942
 	go.starlark.net v0.0.0-20201014215153-dff0ae5b4820
@@ -22,7 +22,7 @@ require (
 	golang.org/x/sync v0.0.0-20201008141435-b3e1573b7520
 	golang.org/x/sys v0.0.0-20201017003518-b09fb700fbb7
 	google.golang.org/genproto v0.0.0-20201015140912-32ed001d685c // indirect
-	google.golang.org/grpc v1.32.0
+	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.25.0
 	h12.io/socks v1.0.1
 )
